@@ -30,9 +30,9 @@ app.listen(port, () => {
 })
  
 // table STUDENT Routes
-const StudentModel = mongoose.model('admissions', schema.StudentSchema);
+const uModel = mongoose.model('uroles', schema.uRoles);
 
-app.get("/getStudentsByCondi", async (rqst, res) => {
+app.get("/getUsersByCondi", async (rqst, res) => {
   try {
     // neu co cac truong phu nhu sort/fields... phai loai ra truoc
     const exclField = ['sort','page','limit','fields']
@@ -46,7 +46,7 @@ app.get("/getStudentsByCondi", async (rqst, res) => {
 
     qryObj = JSON.parse(qryString)
 
-    let queryCondi = StudentModel.find(qryObj)
+    let queryCondi = uModel.find(qryObj)
 
     //neu co sort
     if (rqst.query.sort){
@@ -62,21 +62,21 @@ app.get("/getStudentsByCondi", async (rqst, res) => {
         queryCondi = queryCondi.select("-__v")
     }
 
-    const arrStdts = await queryCondi
-    res.status(200).json(arrStdts);
+    const arrUsers = await queryCondi
+    res.status(200).json(arrUsers);
   } catch (err) {
-    res.status(500).json({ error: "Failed to fetch students" });
+    res.status(500).json({ error: err });
   }
 });
 
-app.post("/createStudent", async (rqst, res) => {
+app.post("/createUser", async (rqst, res) => {
+
   try {
-    const { MSSV, FullName } = rqst.body;
-    const newStudent = new StudentModel({ MSSV, FullName });
-    const savedStudent = await newStudent.save();
-    res.status(201).json(savedStudent);
+    const newUser = new uModel(rqst.body);
+    const savedUser = await newUser.save();
+    res.status(201).json(savedUser);
   } catch (err) {
-    res.status(500).json({ error: "Failed to create new student" });
+    res.status(500).json({ error: err });
   }
 });
 
