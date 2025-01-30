@@ -1,10 +1,12 @@
 const mongoose = require("mongoose")
 
-const StudentSchema = new mongoose.Schema({
-  MSSV: { type: String, required: true },
-  FullName: { type: String, required: true },
+const uRoles = new mongoose.Schema({
+  email: { type: String, required: true },
+  studentprofile: { type: Boolean, required: true },
+  academicrecord: { type: Boolean, required: true },
+  examresult: { type: Boolean, required: true },
 });
 
 module.exports = {
-  StudentSchema: StudentSchema,
+  uRoles: uRoles,
 }
