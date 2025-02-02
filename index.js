@@ -106,14 +106,15 @@ app.put("/UpdateUserRoles", async (rqst, res) => {
   }
 });
 
-app.delete("/:email", async (rqst, res) => {
+app.delete("/:email/:appname", async (rqst, res) => {
   try {
-    const deletedUser = await uModel.findOneAndDelete({"email": rqst.params.email})
+    const deletedUser = await uModel.findOneAndDelete({"email": rqst.params.email,"appname":rqst.params.appname})
     res.status(201).json(deletedUser);
   } catch (err) {
     res.status(500).json({ error: err });
   }
 });
+
 
 // Table BLAH Routes
 
