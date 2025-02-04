@@ -117,6 +117,16 @@ app.delete("/:email/:appname", async (rqst, res) => {
 
 
 // Table BLAH Routes
+app.post("/createOneOneStar", async (rqst, res) => {
+  try {
+    const newExp = await mongoose.connection.db.collection("beyond").insertOne(rqst.body)
+    res.status(201).json(newExp);
+  } catch (err) {
+    res.status(500).json({ error: err });
+  }
+
+});
+
 
 
 
