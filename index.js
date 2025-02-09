@@ -36,8 +36,12 @@ app.put("/API/UpdateDocument/:collName/:Id", async (rqst, res) => {
     const id = rqst.params.Id
     const collName = rqst.params.collName
     const dataModel = mongoose.model(collName, schema.beyondoneones);    
-    const updatedDoc = await dataModel.findByIdAndUpdate({ _id: new mongoose.Types.ObjectId(id) }, { $set: rqst.body }, { new: true, writeConcern: { w: 'majority' }, strict: false })
-
+    const exclField = ['_id']
+    let objBeingUpdated = {...rqst.body}
+    exclField.forEach((ele) => {
+      delete objBeingUpdated[ele]
+    })
+    const updatedDoc = await dataModel.findByIdAndUpdate({ _id: new mongoose.Types.ObjectId(id) }, { $set: objBeingUpdated }, { new: true, writeConcern: { w: 'majority' }, strict: false })
     res.status(200).json(updatedDoc);
   } catch (err) {
     res.status(500).json({ error: err });
