@@ -1,17 +1,11 @@
 // https://fstmongo.onrender.com
+
+require('dotenv').config();
 const express = require("express");
 const mongoose = require("mongoose")
 const cors = require ("cors")
-
 const schema = require ("./schema.js")
-
-const corsOptions = {
-  origin:'*', 
-  credentials:true,            //access-control-allow-credentials:true
-  optionSuccessStatus:200,
-};
-
-require('dotenv').config();
+const corsOptions = {origin:'*', credentials:true, optionSuccessStatus:200};
 const dbUser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASSWORD;
 const dbName = process.env.DB_NAME
@@ -75,17 +69,6 @@ app.get("/getUsersByCondi", async (rqst, res) => {
   }
 });
 
-app.post("/createUser", async (rqst, res) => {
-
-  try {
-    const newUser = new uModel(rqst.body);
-    const savedUser = await newUser.save();
-    res.status(201).json(savedUser);
-  } catch (err) {
-    res.status(500).json({ error: err });
-  }
-});
-
 app.post("/createFlexUser", async (rqst, res) => {
   try {
     const newUser = await mongoose.connection.db.collection("uroles").insertOne(rqst.body)
@@ -117,15 +100,15 @@ app.delete("/:email/:appname", async (rqst, res) => {
 
 
 // Table BLAH Routes
-app.post("/createOneOneStar", async (rqst, res) => {
+app.post("/API/InsertIntoCollection/:collName", async (rqst, res) => {
   try {
-    const newExp = await mongoose.connection.db.collection("beyond").insertOne(rqst.body)
+    const newExp = await mongoose.connection.db.collection(rqst.params.collName).insertOne(rqst.body)
     res.status(201).json(newExp);
   } catch (err) {
     res.status(500).json({ error: err });
   }
-
 });
+
 
 
 
