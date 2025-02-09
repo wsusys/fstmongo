@@ -25,19 +25,20 @@ mongoose.connect(url)
     console.error('Error connecting to MongoDB:', err)
 );
 
+//mongoose.set('debug', true)
 
 app.listen(port, () => {
   console.log(`Server is running on https://localhost:${port}`);
 })
 
-app.put("/API/UpdateDocument/:collName/:id", async (rqst, res) => {
-
+app.put("/API/UpdateDocument/:collName/:Id", async (rqst, res) => {
   try {
+    const id = rqst.params.Id
     const collName = rqst.params.collName
-    const dataModel = mongoose.model(collName, schema[collName]);    
-    const newExp = await dataModel.findOneAndUpdate({_id: rqst.params.id}, {$set: rqst.body},{new:true})
+    const dataModel = mongoose.model(collName, schema.beyondoneones);    
+    const updatedDoc = await dataModel.findByIdAndUpdate({ _id: new mongoose.Types.ObjectId(id) }, { $set: rqst.body }, { new: true, writeConcern: { w: 'majority' }, strict: false })
 
-    res.status(201).json(newExp);
+    res.status(200).json(updatedDoc);
   } catch (err) {
     res.status(500).json({ error: err });
   }
