@@ -31,9 +31,11 @@ app.listen(port, () => {
 })
 
 app.put("/API/UpdateDocument/:collName/:id", async (rqst, res) => {
+
   try {
+    const collName = rqst.params.collName
     const dataModel = mongoose.model(collName, schema[collName]);    
-    const newExp = await dataModel.findByIdAndUpdate(rqst.params.id, rqst.body)
+    const newExp = await dataModel.findOneAndUpdate({_id: rqst.params.id}, {$set: rqst.body},{new:true})
 
     res.status(201).json(newExp);
   } catch (err) {
