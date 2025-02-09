@@ -30,6 +30,18 @@ app.listen(port, () => {
   console.log(`Server is running on https://localhost:${port}`);
 })
 
+app.put("/API/UpdateDocument/:collName/:id", async (rqst, res) => {
+  try {
+    const dataModel = mongoose.model(collName, schema[collName]);    
+    const newExp = await dataModel.findByIdAndUpdate(rqst.params.id, rqst.body)
+
+    res.status(201).json(newExp);
+  } catch (err) {
+    res.status(500).json({ error: err });
+  }
+});
+
+
 app.post("/API/InsertIntoCollection/:collName", async (rqst, res) => {
   try {
     const newExp = await mongoose.connection.db.collection(rqst.params.collName).insertOne(rqst.body)
