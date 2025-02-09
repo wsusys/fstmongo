@@ -3,8 +3,8 @@
 require('dotenv').config();
 const express = require("express");
 const mongoose = require("mongoose")
-const cors = require ("cors")
 const schema = require ("./schema.js")
+const cors = require ("cors")
 const corsOptions = {origin:'*', credentials:true, optionSuccessStatus:200};
 const dbUser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASSWORD;
@@ -27,26 +27,37 @@ mongoose.connect(url)
 
 
 app.listen(port, () => {
-  console.log(`Server is running on ${port}`);
+  console.log(`Server is running on https://localhost:${port}`);
 })
- 
-// table UserRoles Routes
-const uModel = mongoose.model('uroles', schema.uRoles);
-app.get("/getUsersByCondi", async (rqst, res) => {
+
+app.post("/API/InsertIntoCollection/:collName", async (rqst, res) => {
   try {
+    const newExp = await mongoose.connection.db.collection(rqst.params.collName).insertOne(rqst.body)
+    res.status(201).json(newExp);
+  } catch (err) {
+    res.status(500).json({ error: err });
+  }
+});
+
+
+app.get("/API/getDataByCondi", async (rqst, res) => {
+  try {
+    
+    const collName = rqst.query["collName"]
+    const dataModel = mongoose.model(collName, schema[collName]);    
     // neu co cac truong phu nhu sort/fields... phai loai ra truoc
-    const exclField = ['sort','page','limit','fields']
+    const exclField = ['sort','page','limit','fields','collName']
     let qryObj = {...rqst.query}
     exclField.forEach((ele) => {
       delete qryObj[ele]
     })
     // neu query string co so va dk là gte/gt.. thi phai them $ vao qry string nhu sau
     let qryString = JSON.stringify (qryObj)
-    qryString = qryString.replace (/\b(gte|gt|lte\lt)\b/g, (match) => `$${match}`)
+    qryString = qryString.replace (/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`)
 
     qryObj = JSON.parse(qryString)
 
-    let queryCondi = uModel.find(qryObj)
+    let queryCondi = dataModel.find(qryObj)
 
     //neu co sort
     if (rqst.query.sort){
@@ -62,50 +73,11 @@ app.get("/getUsersByCondi", async (rqst, res) => {
         queryCondi = queryCondi.select("-__v")
     }
 
-    const arrUsers = await queryCondi
-    res.status(200).json(arrUsers);
+    const arrResuls = await queryCondi
+    res.status(200).json(arrResuls);
+
   } catch (err) {
-    res.status(500).json({ error: err });
-  }
-});
-
-app.post("/createFlexUser", async (rqst, res) => {
-  try {
-    const newUser = await mongoose.connection.db.collection("uroles").insertOne(rqst.body)
-    res.status(201).json(newUser);
-  } catch (err) {
-    res.status(500).json({ error: err });
-  }
-
-});
-
-app.put("/UpdateUserRoles", async (rqst, res) => {
-  try {
-    const email = rqst.body.email
-    const newUser = await mongoose.connection.db.collection("uroles").findOneAndReplace({"email": email}, rqst.body)
-    res.status(201).json(newUser);
-  } catch (err) {
-    res.status(500).json({ error: err });
-  }
-});
-
-app.delete("/:email/:appname", async (rqst, res) => {
-  try {
-    const deletedUser = await uModel.findOneAndDelete({"email": rqst.params.email, "appname":rqst.params.appname})
-    res.status(201).json(deletedUser);
-  } catch (err) {
-    res.status(500).json({ error: err });
-  }
-});
-
-
-// Table BLAH Routes
-app.post("/API/InsertIntoCollection/:collName", async (rqst, res) => {
-  try {
-    const newExp = await mongoose.connection.db.collection(rqst.params.collName).insertOne(rqst.body)
-    res.status(201).json(newExp);
-  } catch (err) {
-    res.status(500).json({ error: err });
+    res.status(500).json({ errors: err });
   }
 });
 
