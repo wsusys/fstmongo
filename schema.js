@@ -31,7 +31,8 @@ const beyondoneones = new mongoose.Schema({
       SBU: { type: String, required: false },
       MMYY_From: { type: String, required: false },
       MMYY_Thru: { type: String, required: false },
-      PIC: { type: String, required: false }
+      PIC: { type: String, required: false },
+      ItemName: { type: String, required: false }
     }
   ]
 
