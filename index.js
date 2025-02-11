@@ -104,14 +104,17 @@ app.get("/API/getDataByRegex", async (rqst, res) => {
   try {
     const collName = rqst.query["collName"]
     const dataModel = mongoose.model(collName, schema[collName]);    
-    
+    const exclField = ['sort','page','limit','fields','collName']
+    let qryObj = {...rqst.query}
+    exclField.forEach((ele) => {
+      delete qryObj[ele]
+    })
     const conditions = [];
-    for (const [cle, val] of Object.entries(rqst.body)) {
+    for (const [cle, val] of Object.entries(qryObj)) {
       conditions.push({ [cle] : { $regex: val, $options: 'i' } })
     }
     const filter = conditions.length ? { $or: conditions } : {};
     let queryCondi = dataModel.find(filter)
-
     //neu co sort
     if (rqst.query.sort){
       const sortBy = rqst.query.sort.split (',').join (' ')
