@@ -59,24 +59,33 @@ app.post("/API/InsertIntoCollection/:collName", async (rqst, res) => {
 });
 
 
-app.get("/API/getDataByCondi", async (rqst, res) => {
+app.get("/API/SelectData", async (rqst, res) => {
   try {
     
     const collName = rqst.query["collName"]
+    const andOr = rqst.query["AndOr"]
     const dataModel = mongoose.model(collName, schema[collName]);    
     // neu co cac truong phu nhu sort/fields... phai loai ra truoc
-    const exclField = ['sort','page','limit','fields','collName']
+    const exclField = ['sort','page','limit','fields','collName','AndOr']
     let qryObj = {...rqst.query}
     exclField.forEach((ele) => {
       delete qryObj[ele]
     })
     // neu query string co so va dk là gte/gt.. thi phai them $ vao qry string nhu sau
-    let qryString = JSON.stringify (qryObj)
-    qryString = qryString.replace (/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`)
-
-    qryObj = JSON.parse(qryString)
-
-    let queryCondi = dataModel.find(qryObj)
+    let queryCondi 
+    if (andOr=='A'){
+      let qryString = JSON.stringify (qryObj)
+      qryString = qryString.replace (/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`)
+      qryObj = JSON.parse(qryString)
+      queryCondi = dataModel.find(qryObj)
+    } else {
+      const conditions = [];
+      for (const [cle, val] of Object.entries(qryObj)) {
+        conditions.push({ [cle] : { $regex: val, $options: 'i' } })
+      }
+      const filter = conditions.length ? { $or: conditions } : {};
+      queryCondi = dataModel.find(filter)
+    }
 
     //neu co sort
     if (rqst.query.sort){
@@ -99,50 +108,3 @@ app.get("/API/getDataByCondi", async (rqst, res) => {
     res.status(500).json({ errors: err });
   }
 });
-
-app.get("/API/getDataByRegex", async (rqst, res) => {
-  try {
-    const collName = rqst.query["collName"]
-    const dataModel = mongoose.model(collName, schema[collName]);    
-    const exclField = ['sort','page','limit','fields','collName']
-    let qryObj = {...rqst.query}
-    exclField.forEach((ele) => {
-      delete qryObj[ele]
-    })
-    const conditions = [];
-    for (const [cle, val] of Object.entries(qryObj)) {
-      conditions.push({ [cle] : { $regex: val, $options: 'i' } })
-    }
-    const filter = conditions.length ? { $or: conditions } : {};
-    let queryCondi = dataModel.find(filter)
-    //neu co sort
-    if (rqst.query.sort){
-      const sortBy = rqst.query.sort.split (',').join (' ')
-      queryCondi = queryCondi.sort(sortBy)
-    }
-  // neu can specify field
-    if (rqst.query.fields){
-      const fieldList = "-__v " + rqst.query.fields.split (',').join (' ')
-      queryCondi = queryCondi.select(fieldList)
-    }
-    else {
-        queryCondi = queryCondi.select("-__v")
-    }
-
-    const arrResuls = await queryCondi
-    res.status(200).json(arrResuls);
-
-  } catch (err) {
-    res.status(500).json({ errors: err });
-  }
-});
-
-
-
-
-
-// notes
-// cach goi bt : localhost:2000/getStudentByCondi?MSSV=blah&FullName=blah
-// neu có so sanh : localhost:2000/getStudentByCondi?DOB[gt]=blah&Tuoi[gte]=blah
-//cach goi localhost:2000/getStudentByCondi?MSSV=blah&FullName=blah&sort=-MSSV,FullName
-//cach goi localhost:2000/getStudentByCondi?MSSV=blah&FullName=blah&fields=MSSV,FullName,DOB
