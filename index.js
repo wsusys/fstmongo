@@ -104,7 +104,12 @@ app.get("/API/getDataByRegex", async (rqst, res) => {
   try {
     const collName = rqst.query["collName"]
     const dataModel = mongoose.model(collName, schema[collName]);    
-    const filter = { $or: rqst.body } 
+    
+    const conditions = [];
+    for (const [cle, val] of Object.entries(rqst.body)) {
+      conditions.push({ [cle] : { $regex: val, $options: 'i' } })
+    }
+    const filter = conditions.length ? { $or: conditions } : {};
     let queryCondi = dataModel.find(filter)
 
     //neu co sort
