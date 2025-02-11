@@ -100,6 +100,34 @@ app.get("/API/getDataByCondi", async (rqst, res) => {
   }
 });
 
+app.get("/API/getDataByRegex", async (rqst, res) => {
+  try {
+    const collName = rqst.query["collName"]
+    const dataModel = mongoose.model(collName, schema[collName]);    
+    const filter = { $or: rqst.body } 
+    let queryCondi = dataModel.find(filter)
+
+    //neu co sort
+    if (rqst.query.sort){
+      const sortBy = rqst.query.sort.split (',').join (' ')
+      queryCondi = queryCondi.sort(sortBy)
+    }
+  // neu can specify field
+    if (rqst.query.fields){
+      const fieldList = "-__v " + rqst.query.fields.split (',').join (' ')
+      queryCondi = queryCondi.select(fieldList)
+    }
+    else {
+        queryCondi = queryCondi.select("-__v")
+    }
+
+    const arrResuls = await queryCondi
+    res.status(200).json(arrResuls);
+
+  } catch (err) {
+    res.status(500).json({ errors: err });
+  }
+});
 
 
 
