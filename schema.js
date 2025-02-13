@@ -10,8 +10,8 @@ const uroles = new mongoose.Schema({
 const beyondmiscs = new mongoose.Schema({
   Cat: { type: String, required: true },
   Val: { type: String, required: false },
-  Str1: { type: Boolean, required: false },
-  Str2: { type: Boolean, required: false },
+  Str1: { type: String, required: false },
+  Str2: { type: String, required: false },
 });
 
 const beyondoneones = new mongoose.Schema({
