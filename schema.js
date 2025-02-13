@@ -7,7 +7,7 @@ const uroles = new mongoose.Schema({
   examresult: { type: Boolean, required: true },
 });
 
-const beyondmisc = new mongoose.Schema({
+const beyondmiscs = new mongoose.Schema({
   Cat: { type: String, required: true },
   Val: { type: String, required: false },
   Str1: { type: Boolean, required: false },
@@ -48,5 +48,6 @@ const beyondoneones = new mongoose.Schema({
 module.exports = {
   beyondoneones: beyondoneones,
   uroles: uroles,
+  beyondmiscs: beyondmiscs,
   
 }
