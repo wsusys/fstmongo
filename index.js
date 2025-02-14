@@ -66,7 +66,7 @@ app.get("/API/SelectData", async (rqst, res) => {
     const andOr = rqst.query["AndOr"]
     const dataModel = mongoose.model(collName, schema[collName]);    
     // neu co cac truong phu nhu sort/fields... phai loai ra truoc
-    const exclField = ['sort','page','limit','fields','collName','AndOr']
+    const exclField = ['sort','page','limit','fields','collName','andOr']
     let qryObj = {...rqst.query}
     exclField.forEach((ele) => {
       delete qryObj[ele]
