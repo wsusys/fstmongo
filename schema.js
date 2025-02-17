@@ -2,9 +2,10 @@ const mongoose = require("mongoose")
 
 const uroles = new mongoose.Schema({
   email: { type: String, required: true },
-  studentprofile: { type: Boolean, required: true },
-  academicrecord: { type: Boolean, required: true },
-  examresult: { type: Boolean, required: true },
+  appname: { type: String, required: true },
+  studentprofile: { type: Boolean, required: false },
+  academicrecord: { type: Boolean, required: false },
+  examresult: { type: Boolean, required: false },
 });
 
 const beyondmiscs = new mongoose.Schema({
