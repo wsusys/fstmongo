@@ -63,7 +63,7 @@ app.get("/API/SelectData", async (rqst, res) => {
   try {
     
     const collName = rqst.query["collName"]
-    const andOr = rqst.query["AndOr"]
+    const andOr = rqst.query["andOr"]
     const dataModel = mongoose.model(collName, schema[collName]);    
     // neu co cac truong phu nhu sort/fields... phai loai ra truoc
     const exclField = ['sort','page','limit','fields','collName','andOr']
