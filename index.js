@@ -41,7 +41,7 @@ app.put("/API/UpdateDocument/:collName/:Id", async (rqst, res) => {
   try {
     const id = rqst.params.Id
     const collName = rqst.params.collName
-    const dataModel = mongoose.model(collName, schema.beyondoneones);    
+    const dataModel = mongoose.model(collName, schema.collName);    
     const exclField = ['_id']
     let objBeingUpdated = {...rqst.body}
     exclField.forEach((ele) => {
