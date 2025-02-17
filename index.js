@@ -15,6 +15,12 @@ const app = express();
 app.use(cors(corsOptions));
 app.use(express.json());
 
+const myEnum = {
+  collectionName: "collName",
+  andOrCondi: "andOr"
+
+}
+
 // MongoDB connection URI
 const url =`mongodb+srv://${dbUser}:${dbPassword}@cluster0.sjgov.mongodb.net/${dbName}?retryWrites=true&w=majority&appName=Cluster0`
 mongoose.connect(url)
@@ -62,11 +68,14 @@ app.post("/API/InsertIntoCollection/:collName", async (rqst, res) => {
 app.get("/API/SelectData", async (rqst, res) => {
   try {
     
-    const collName = rqst.query["collName"]
-    const andOr = rqst.query["andOr"]
+    const collName = rqst.query[myEnum.collectionName]
+    const andOr = rqst.query[myEnum.andOrCondi]
     const dataModel = mongoose.model(collName, schema[collName]);    
     // neu co cac truong phu nhu sort/fields... phai loai ra truoc
-    const exclField = ['sort','page','limit','fields','collName','andOr']
+    let exclField = ['sort','page','limit','fields']
+    exclField.push(myEnum.collectionName)
+    exclField.push(myEnum.andOrCondi)
+    
     let qryObj = {...rqst.query}
     exclField.forEach((ele) => {
       delete qryObj[ele]
