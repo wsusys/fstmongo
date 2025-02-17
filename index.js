@@ -77,14 +77,14 @@ app.get("/API/SelectData", async (rqst, res) => {
       let qryString = JSON.stringify (qryObj)
       qryString = qryString.replace (/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`)
       qryObj = JSON.parse(qryString)
-      queryCondi = dataModel.find(qryObj)
+      queryCondi = dataModel.find(qryObj).pretty().lean()
     } else {
       const conditions = [];
       for (const [cle, val] of Object.entries(qryObj)) {
         conditions.push({ [cle] : { $regex: val, $options: 'i' } })
       }
       const filter = conditions.length ? { $or: conditions } : {};
-      queryCondi = dataModel.find(filter)
+      queryCondi = dataModel.find(filter).pretty().lean()
     }
 
     //neu co sort
