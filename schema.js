@@ -15,6 +15,13 @@ const beyondmiscs = new mongoose.Schema({
   Str2: { type: String, required: false },
 });
 
+const miscs = new mongoose.Schema({
+  Cat: { type: String, required: true },
+  Val: { type: String, required: false },
+  Str1: { type: String, required: false },
+  Str2: { type: String, required: false },
+});
+
 const beyondoneones = new mongoose.Schema({
   TrxNo: { type: String, required: true },
   Descr: { type: String, required: true },
@@ -50,5 +57,6 @@ module.exports = {
   beyondoneones: beyondoneones,
   uroles: uroles,
   beyondmiscs: beyondmiscs,
+  miscs: miscs,
   
 }

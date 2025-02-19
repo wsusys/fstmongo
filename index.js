@@ -18,8 +18,9 @@ app.use(express.json());
 const myEnum = {
   collectionName: "collName",
   andOrCondi: "andOr"
-
 }
+let exclField = ['sort','page','limit','fields',myEnum.collectionName, myEnum.andOrCondi]
+
 
 // MongoDB connection URI
 const url =`mongodb+srv://${dbUser}:${dbPassword}@cluster0.sjgov.mongodb.net/${dbName}?retryWrites=true&w=majority&appName=Cluster0`
@@ -67,15 +68,12 @@ app.post("/API/InsertIntoCollection/:collName", async (rqst, res) => {
 
 app.get("/API/SelectData", async (rqst, res) => {
   try {
-    
+   
     const collName = rqst.query[myEnum.collectionName]
     const andOr = rqst.query[myEnum.andOrCondi]
     const dataModel = mongoose.model(collName, schema[collName]);    
     // neu co cac truong phu nhu sort/fields... phai loai ra truoc
-    let exclField = ['sort','page','limit','fields']
-    exclField.push(myEnum.collectionName)
-    exclField.push(myEnum.andOrCondi)
-    
+  
     let qryObj = {...rqst.query}
     exclField.forEach((ele) => {
       delete qryObj[ele]
@@ -117,3 +115,22 @@ app.get("/API/SelectData", async (rqst, res) => {
     res.status(500).json({ errors: err });
   }
 });
+
+app.get("/API/getRamdomItem", async (rqst, res) => {
+  try {
+    const collName = rqst.query[myEnum.collectionName]
+    const dataModel = mongoose.model(collName, schema[collName]);    
+    let qryObj = {...rqst.query}
+    exclField.forEach((ele) => {
+      delete qryObj[ele]
+    })
+    const arrResuls = await dataModel.aggregate([
+      { $match: qryObj },  // Filter by category
+      { $sample: { size: 1 } }          // Get one random item
+    ])
+    res.status(201).json(arrResuls);
+  } catch (err) {
+    res.status(500).json({ error: err });
+  }
+});
+
