@@ -108,7 +108,7 @@ app.get("/API/SelectData", async (rqst, res) => {
         queryCondi = queryCondi.select("-__v")
     }
 
-    const arrResuls = await queryCondi
+    const arrResuls = await queryCondi.lean()
     res.status(200).json(arrResuls);
 
   } catch (err) {
