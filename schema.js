@@ -25,18 +25,18 @@ const miscs = new mongoose.Schema({
 const beyondoneones = new mongoose.Schema({
   TrxNo: { type: String, required: true },
   Descr: { type: String, required: true },
-  CrDb: { type: String, required: true },
   Acct: { type: String, required: true },
-  Amount: { type: Number, required: true },
+  CrAmount: { type: Number, required: true },
+  DbAmount: { type: Number, required: true },
   Curr: { type: String, required: true },
   Bank: { type: String, required: false},
   TrxDate: { type: String, required: true },
   Status: { type: String, required: true },
   ContraAccounting: [
     {
-      CrDb: { type: String, required: true },
       Acct: { type: String, required: true },
-      Amount: { type: String, required: true },
+      CrAmount: { type: String, required: true },
+      DbAmount: { type: String, required: true },
       Curr: { type: String, required: true },
       ROE: { type: Number, required: true },
       Job: { type: String, required: false },
