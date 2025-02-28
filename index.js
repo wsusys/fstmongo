@@ -101,7 +101,7 @@ app.get("/API/SelectData", async (rqst, res) => {
     }
   // neu can specify field
     if (rqst.query.fields){
-      const fieldList = "-__v " + rqst.query.fields.split (',').join (' ')
+      const fieldList = rqst.query.fields.split (',').join (' ')
       queryCondi = queryCondi.select(fieldList)
     }
     else {
